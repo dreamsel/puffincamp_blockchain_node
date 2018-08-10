@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Puffin coin</title>
+  <% include partials/header-includes %>
+</head>
+<body>
+  <div class="site-wrapper">
+      <div class="cover-container">
+        <% include partials/nav %>
+        <div class="inner cover page">
+          <h1 class="cover-heading">Latest Puffin ballances.</h1>
+          <table class="ballances">
+            <tr><th>id</th><th>ballance</th></tr>
+              <%for(let key in ballances){%>
+                <tr><td><%=key%></td><td><%=ballances[key]%></td></tr>
+              <%}%>
+          </table>
+        </div>
+        <% include partials/footer %>
+      </div>
+  </div>
+</body>
+<% include partials/bootstrap-js %>
+</html>

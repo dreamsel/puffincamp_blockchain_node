@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Puffin coin</title>
+  <% include partials/header-includes %>
+</head>
+<body>
+  <div class="site-wrapper">
+      <div class="cover-container">
+        <% include partials/nav %>
+        <div class="inner cover page">
+          <h1 class="cover-heading">Puffin coin example.</h1>
+          <p class="lead">Puffin coin is an example blockchain project to test basic blockchain properties and functionality. Try "blocks" to see recent blocks and "ballances" to see last ballances.</p>
+          <div class="lead">
+            <div id="status">
+              <table class="bordered">
+                <tr><th>id</th><td><%=state.id%></td></tr>
+                <tr><th>name</th><td><%=state.name%></td></tr>
+                <tr><th>url</th><td><%=state.url%></td></tr>
+                <tr><th>neighbours</th><td>
+                  <% state.neighbours.forEach(neighbour => {%>
+                    <p><b><%=neighbour.id%></b> <%=neighbour.url%></p>
+                  <%})%>
+                  <div><button id="sync-btn">sync</button></div>
+                </td></tr>
+                <tr><th>last hash</th><td><%=state.last_hash%></td></tr>
+                <tr><th>pending tx</th><td>
+
+                  <%state.tx.forEach(tx => {%>
+                    <div><b>From</b> <span><%=tx.from%></span>,
+                      <b>To</b> <span><%=tx.to%></span>,
+                      <b>Amount</b> <span><%=tx.amount%></span>
+                    </div>
+                  <%})%>
+
+                </td></tr>
+                <tr><th>blocks</th><td>
+                  <%blocks.forEach(block=>{%>
+                    <p> <%=block.hash%></p>
+                  <%})%>
+                  <p>...</p>
+                </td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <% include partials/footer %>
+      </div>
+  </div>
+</body>
+<% include partials/bootstrap-js %>
+<script>
+  $('#sync-btn').click(function(){
+    $.ajax(base_url+'/management/sync',{method:'GET'})
+    .then(function(){window.location.reload()})
+    .catch(function(err){console.log(err)});
+  });
+</script>
+</html>

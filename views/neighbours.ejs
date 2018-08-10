@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Puffin coin</title>
+  <% include partials/header-includes %>
+</head>
+<body>
+  <div class="site-wrapper">
+      <div class="cover-container">
+        <% include partials/nav %>
+        <div class="inner cover page">
+          <h3>Add neighbours</h3>
+          <form id="add_neighbours_form" class="neighbour_form">
+            <label for="id_field">Id</label><input type="text" name="id" id="id_field" style="width:50px">
+            <label for="url_field">Url</label><input type="text" name="url" id="url_field">
+          </form>
+          <button id="add_neighbour_btn">Add neighbour</button>
+
+          <hr>
+
+          <h3 class="cover-heading">Neighbours.</h3>
+          <table class="neighbours">
+            <tr><th>id</th><th>name</th><th>url</th></tr>
+              <%neighbours.forEach(neighbour=>{%>
+                <tr><td><%=neighbour.id%></td><td><%=neighbour.name%></td>
+                <td><%=neighbour.url%></td>
+                <td><a class="btn btn-danger remove_neighbour" href="#" id="<%=neighbour.id%>" >Remove</a></td>
+              </tr>
+              <%})%>
+          </table>
+        </div>
+        <% include partials/footer %>
+      </div>
+  </div>
+</body>
+<% include partials/bootstrap-js %>
+<script>
+$(function(){
+  $('#add_neighbour_btn').click(function(){
+    const id = $('#id_field').val();
+    const url = $('#url_field').val();
+    if(id && url){
+      $.ajax(base_url+'/management/add_link',{
+        method:'POST',
+        dataType:'json',
+        data:{id:id,url:url},
+      })
+      .done(function(result) {
+        if(result.success){
+          window.location.reload();//yep, ugly, but i want to employ sending data via ajax
+        }
+      })
+      .fail((xhr,err,descr) => console.log('error adding neighbour',err,descr));
+    }
+  });
+  $('.remove_neighbour').click(function(e){
+    e.preventDefault();
+    const id = $(this).prop('id');
+    $.ajax(base_url+'/management/remove_link/'+id,{method:'DELETE'})
+      .then(response=>{
+
+        if(response.success){
+            window.location.reload();
+        }
+        else{
+          alert(response.status + ':' + response.message);
+        }
+      }).catch((xhr,status,error)=>console.log(error));
+  });
+});
+</script>
+
+</html>

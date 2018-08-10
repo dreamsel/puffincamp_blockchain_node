@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Puffin coin</title>
+  <% include partials/header-includes %>
+</head>
+<body>
+  <div class="site-wrapper">
+      <div class="cover-container">
+        <% include partials/nav %>
+        <div class="inner cover page">
+          <h3>Transactions</h3>
+          <div id="transactions">
+            <%if(transactions.length == 0){%>
+              Empty
+            <%}
+            else{
+            transactions.forEach(tx=>{%>
+                <div class="transaction"><b>from</b> <%=tx.from%>, <b>to</b> <%=tx.to%>, <b>amount</b> <%=tx.amount%></div>
+            <%})
+            }%>
+          </div>
+          <h3>Add transaction</h3>
+          <form id="add_transaction_form" class="transaction_form">
+            <label for="from_field">From</label><input type="text" name="from" id="from_field">
+            <label for="to_field">To</label><input type="text" name="to" id="to_field">
+            <label for="amount_field">Amount</label><input type="text" name="amount" id="amount_field">
+          </form>
+          <button id="add_transaction_btn">Add transaction</button>
+
+          <hr>
+
+          <h3 class="cover-heading">Latest Puffin blocks.</h3>
+          <div class="blocks">
+            <% blocks.forEach(block => {%>
+              <div class="block">
+                <table>
+                <tr><td><b>hash</b></td><td><span><%=block.hash%></span></td></tr>
+                <tr><td><b>prev</b></td><td><span><%=block.prev_hash%></span></td></tr>
+                <tr><td><b>ts</b></td><td><span><%=block.ts%></span></td></tr>
+                <tr><td><b>tx</b></td><td><span>
+                    <% block.tx.forEach(tx => {%>
+                      <div class="transaction"><b>from</b> <%=tx.from%>, <b>to</b> <%=tx.to%>, <b>amount</b> <%=tx.amount%></div>
+                    <%})%>
+                  </span></td></tr>
+                </table>
+              </div>
+            <%})%>
+          </div>
+        </div>
+      </div>
+
+
+  </div>
+</body>
+<% include partials/bootstrap-js %>
+<script>
+$(function(){
+  $('#add_transaction_btn').click(function(){
+    const from = $('#from_field').val();
+    const to = $('#to_field').val();
+    const amount = $('#amount_field').val();
+    if(from && to && amount){
+      $.ajax(base_url+'/management/add_transaction',{
+        method:'POST',
+        dataType:'json',
+        data:{to:to,from:from,amount:amount},
+      })
+      .done(function(result) {
+        if(result.success){
+          window.location.reload();//yep, ugly, but i want to employ sending data via ajax
+        }
+      })
+      .fail((xhr,err,descr) => console.log('error adding transaction',err,descr));
+    }
+  });
+});
+</script>
+</html>
